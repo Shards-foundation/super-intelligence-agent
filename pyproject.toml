@@ -1,3 +1,20 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "super-intelligence-agent"
+version = "0.1.0"
+description = "Experimental multi-agent scaffold. Not a production system."
+readme = "README.md"
+requires-python = ">=3.11"
+# Runtime dependencies stay in requirements.txt, which CI installs before this package.
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agents*", "api*", "core*", "memory*", "tools*"]
+namespaces = true
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"

@@ -1,32 +1,31 @@
 # Super-Intelligence Autonomous Agentic AI System
 
+**Status:** Experimental. Two unit-test modules, a local Docker sketch, and no production deployment.
+
 ## Overview
-This project is an ambitious endeavor to construct a modular, scalable, and fully functional autonomous agent system. It integrates a diverse array of cutting-edge Large Language Model (LLM) providers and state-of-the-art agentic frameworks, aiming to create a truly intelligent and adaptable AI entity.
+This project is an early scaffold for a modular autonomous agent system. It wires several LLM providers and agent frameworks together. It is not a finished or production system.
 
 ## Features
 - **Multi-Agent Orchestration**: Leverage frameworks like LangGraph, CrewAI, and AutoGen for complex, collaborative agent workflows.
 - **Model Agnostic LLM Integration**: Seamlessly switch between various LLM providers including Kimi K2, Qwen, Mistral, Llama, DeepSeek, Minimax, and GLM (Zhipu AI) via LiteLLM.
-- **Advanced Memory Systems**: Incorporate vector databases (Qdrant) for long-term knowledge retention and Retrieval-Augmented Generation (RAG).
-- **Extensible Tooling**: Integrate with external tools for web browsing, code execution, and messaging platforms (e.g., OpenClaw).
-- **Scalable Deployment**: Containerized deployment using Docker and Kubernetes for production readiness.
-- **Observability**: Built-in monitoring capabilities for system health and agent performance.
+- **Memory**: `memory/vector_memory.py` talks to Qdrant. Semantic memory, episodic memory, and a retrieval pipeline are not implemented.
+- **Tooling**: `tools/` has a DuckDuckGo search helper, an in-process Python `exec` helper, and an OpenClaw stub. Web browsing is not implemented.
+- **Local containers**: `deploy/Dockerfile` and `deploy/docker-compose.yml` can run the API and Qdrant on one machine. There are no Kubernetes manifests.
+- **Observability**: Not included. This repository has no metrics or tracing stack.
 
 ## Architecture
 
 ### Repository Structure
 ```text
-super-agent/
-├── agents/             # Agent definitions (CrewAI, LangGraph, AutoGen)
-├── core/               # Unified LLM interface and base classes
-├── memory/             # Vector DB and memory management
-├── tools/              # Custom tools and integrations (OpenClaw, Browser)
-├── api/                # FastAPI backend for external access
-├── frontend/           # Dashboard for monitoring and interaction (Placeholder)
-├── config/             # Configuration files and environment variables
-├── deploy/             # Docker, K8s, and CI/CD files
-├── tests/              # Unit and integration tests
-└── docs/               # Project documentation
-└── README.md           # Project overview
+super-intelligence-agent/
+├── agents/             # CrewAI, LangGraph, AutoGen, and PydanticAI wrappers
+├── core/               # LLM manager and provider routing
+├── memory/             # Qdrant helper
+├── tools/              # Search helper, in-process exec, OpenClaw stub
+├── api/                # FastAPI app
+├── deploy/             # Dockerfile and Compose file
+├── tests/unit/         # Two unit-test modules
+└── docs/               # Design notes
 ```
 
 ### Core Components
@@ -43,23 +42,20 @@ To ensure flexibility and access to the best available models, this layer provid
 - **LiteLLM**: Acts as a universal API wrapper, standardizing calls to different LLMs such as Kimi K2 (Moonshot AI), Qwen (Alibaba Cloud), Mistral, Llama (via Groq or local deployment), DeepSeek, Minimax, and GLM (Zhipu AI). This abstraction allows for easy swapping of models and reduces vendor lock-in.
 
 #### Memory & Knowledge Layer
-Effective memory is crucial for autonomous agents to learn and adapt. This layer includes:
-- **Vector Databases (Qdrant)**: For storing and retrieving high-dimensional embeddings of information, enabling Retrieval-Augmented Generation (RAG) and long-term knowledge retention.
-- **Semantic Memory**: Stores and manages conversational context, user preferences, and learned facts, allowing agents to maintain coherent and personalized interactions.
-- **Episodic Memory**: Records past actions, observations, and outcomes, facilitating self-reflection and continuous learning.
+`memory/vector_memory.py` can upsert and search vectors in Qdrant. Semantic memory, episodic memory, and a retrieval pipeline are not implemented.
 
 #### Tools & Skills Layer
 Agents gain their autonomy through the ability to interact with the external world. This layer provides a suite of tools and integrations:
 - **OpenClaw Integration**: A placeholder for integrating with OpenClaw (formerly Clawdbot), enabling the agent to interact with users through various messaging applications.
-- **Browser Automation**: Utilizes tools like Playwright or Selenium to enable agents to navigate, extract information from, and interact with web pages.
-- **Code Execution Sandbox**: Provides a secure environment for agents to execute Python code, useful for data analysis, complex calculations, and interacting with local systems.
+- **Browser automation**: Not implemented. Playwright is listed in `requirements.txt` but no module imports it.
+- **Code execution**: `tools/custom_tools.py` runs Python with `exec` inside the API process. That is not a sandbox.
 - **Custom Tools**: A framework for defining and integrating specialized tools tailored to specific tasks or domains, leveraging the tool ecosystems of LangChain and CrewAI.
 
 #### Infrastructure & Deployment
-Designed for robustness and scalability:
-- **Docker & Docker Compose**: For packaging the agent system into portable containers, simplifying development and deployment.
-- **Kubernetes**: For orchestrating containerized applications in production, ensuring high availability, scalability, and efficient resource utilization.
-- **Monitoring (Prometheus/Grafana)**: For real-time tracking of system performance, agent activity, and potential issues, crucial for maintaining a reliable autonomous system.
+What is actually in the repository:
+- **Docker & Docker Compose**: `deploy/Dockerfile` and `deploy/docker-compose.yml` package the API and a Qdrant service for local use.
+- **Kubernetes**: No manifests are included.
+- **Monitoring**: No Prometheus or Grafana configuration is included.
 
 ## Getting Started
 
@@ -72,7 +68,7 @@ Designed for robustness and scalability:
 ### Installation
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/super-intelligence-agent.git
+   git clone https://github.com/Shards-foundation/super-intelligence-agent.git
    cd super-intelligence-agent
    ```
 2. **Set up environment variables:**
@@ -85,9 +81,9 @@ Designed for robustness and scalability:
    ```bash
    pip install -r requirements.txt
    ```
-4. **Start Qdrant (Vector Database):
+4. **Start Qdrant (Vector Database):**
    ```bash
-   docker-compose up -d qdrant
+   docker compose -f deploy/docker-compose.yml up -d qdrant
    ```
 5. **Run the FastAPI application:**
    ```bash
@@ -95,7 +91,7 @@ Designed for robustness and scalability:
    ```
    Alternatively, use Docker Compose to run the entire stack:
    ```bash
-   docker-compose up -d
+   docker compose -f deploy/docker-compose.yml up -d
    ```
 
 ## Usage
