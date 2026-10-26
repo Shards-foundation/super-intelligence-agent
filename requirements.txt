@@ -15,7 +15,8 @@ google-generativeai
 mistralai
 zhipuai
 dashscope
-moonshot-python
+# Moonshot/Kimi is called through LiteLLM (model id moonshot/moonshot-v1-8k).
+# PyPI has no distribution named moonshot-python.
 
 # Memory & Knowledge
 pymilvus
