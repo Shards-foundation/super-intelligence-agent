@@ -1,0 +1,16 @@
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+enhancement:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "agents/**"
+          - "api/**"
+          - "core/**"
+          - "scripts/**"
+          - "tools/**"
+github_actions:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/workflows/**"
